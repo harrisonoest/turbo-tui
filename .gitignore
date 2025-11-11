@@ -1,0 +1,26 @@
+# Rust
+/target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Config files with credentials
+config.toml
+
+# Query results
+results_*.json
+results_*.csv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node.js (legacy)
+node_modules/
+package-lock.json
+
+.amazonq/
