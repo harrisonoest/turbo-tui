@@ -19,6 +19,12 @@ async fn main() -> anyhow::Result<()> {
     let config = Config::load("config.toml")?;
     let db = Database::new(config.database.clone());
 
+    std::panic::set_hook(Box::new(|info| {
+        let _ = disable_raw_mode();
+        let _ = execute!(io::stdout(), LeaveAlternateScreen, DisableMouseCapture);
+        eprintln!("Panic: {info}");
+    }));
+
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
