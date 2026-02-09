@@ -48,25 +48,38 @@ impl Default for App {
 impl App {
     pub fn insert_char(&mut self, c: char) {
         self.query.insert(self.cursor_position, c);
-        self.cursor_position += 1;
+        self.cursor_position += c.len_utf8();
     }
 
     pub fn delete_char(&mut self) {
         if self.cursor_position > 0 {
-            self.query.remove(self.cursor_position - 1);
-            self.cursor_position -= 1;
+            let prev = self.query[..self.cursor_position]
+                .char_indices()
+                .next_back()
+                .map(|(i, _)| i)
+                .unwrap_or(0);
+            self.query.remove(prev);
+            self.cursor_position = prev;
         }
     }
 
     pub fn move_cursor_left(&mut self) {
         if self.cursor_position > 0 {
-            self.cursor_position -= 1;
+            self.cursor_position = self.query[..self.cursor_position]
+                .char_indices()
+                .next_back()
+                .map(|(i, _)| i)
+                .unwrap_or(0);
         }
     }
 
     pub fn move_cursor_right(&mut self) {
         if self.cursor_position < self.query.len() {
-            self.cursor_position += 1;
+            self.cursor_position = self.query[self.cursor_position..]
+                .char_indices()
+                .nth(1)
+                .map(|(i, _)| self.cursor_position + i)
+                .unwrap_or(self.query.len());
         }
     }
 
