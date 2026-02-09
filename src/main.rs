@@ -6,7 +6,7 @@ mod ui;
 use app::{App, Focus};
 use config::Config;
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -79,7 +79,9 @@ async fn run_app<B: ratatui::backend::Backend>(
 
             match app.focus {
                 Focus::Editor => match key.code {
-                    KeyCode::Char('c') => app.should_quit = true,
+                    KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                        app.should_quit = true
+                    }
                     KeyCode::Char(c) => app.insert_char(c),
                     KeyCode::Backspace => app.delete_char(),
                     KeyCode::Left => app.move_cursor_left(),
