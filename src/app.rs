@@ -90,6 +90,7 @@ impl App {
             sqlformat::FormatOptions::default(),
         );
         self.query = formatted;
+        self.cursor_position = self.query.len();
         self.status_message = "Query formatted".to_string();
     }
 
