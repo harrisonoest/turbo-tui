@@ -19,6 +19,10 @@ pub struct DatabaseConfig {
     pub user: String,
     pub password: String,
     pub database: String,
+    #[serde(default)]
+    pub trusted_connection: bool,
+    #[serde(default)]
+    pub trust_server_certificate: bool,
 }
 
 impl Config {

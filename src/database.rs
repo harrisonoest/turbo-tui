@@ -36,15 +36,19 @@ impl Database {
 
         tiberius_config.host(hostname);
         tiberius_config.database(&self.config.database);
-        tiberius_config.trust_cert();
 
-        if !self.config.user.is_empty() {
+        if self.config.trust_server_certificate {
+            tiberius_config.trust_cert();
+        }
+
+        if self.config.trusted_connection {
+            // Windows authentication is default when no auth method is set
+        } else if !self.config.user.is_empty() {
             tiberius_config.authentication(tiberius::AuthMethod::sql_server(
                 &self.config.user,
                 &self.config.password,
             ));
         }
-        // Windows authentication is default when no auth method is set
 
         let tcp = TcpStream::connect(&addr).await?;
         tcp.set_nodelay(true)?;
