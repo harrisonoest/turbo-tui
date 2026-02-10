@@ -162,13 +162,14 @@ impl App {
 
     pub fn update_preview(&mut self, directory: &str) {
         use std::fs;
+        use std::path::Path;
 
         if let Some(filename) = self
             .file_browser
             .files
             .get(self.file_browser.selected_index)
         {
-            let path = format!("{}/{}", directory, filename);
+            let path = Path::new(directory).join(filename);
             self.file_browser.preview =
                 fs::read_to_string(&path).unwrap_or_else(|_| "Error reading file".to_string());
         }
@@ -194,7 +195,7 @@ impl App {
             .files
             .get(self.file_browser.selected_index)
         {
-            let path = format!("{}/{}", directory, filename);
+            let path = std::path::Path::new(directory).join(filename);
             if let Ok(content) = std::fs::read_to_string(&path) {
                 self.query = content;
                 self.cursor_position = self.query.len();
