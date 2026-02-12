@@ -1,12 +1,12 @@
 [database]
-server = ""
-port = 1234
-user = ""
-password = ""
-database = ""
+server = "NSTAR-HE-DB2\\MSSQLSERVER2019"
+port = 59862
+user = "dataHandler"
+password = "sp3c1@l"
+database = "XipTrackMeDownloadEx"
 
 # Unused
-trusted_connection = true
+trusted_connection = false
 trust_server_certificate = true
 
 [queries]

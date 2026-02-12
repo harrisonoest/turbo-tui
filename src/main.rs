@@ -67,6 +67,28 @@ async fn run_app<B: ratatui::backend::Backend>(
                 continue;
             }
 
+            if app.save_dialog.active {
+                match key.code {
+                    KeyCode::Char(c) => app.save_dialog.insert_char(c),
+                    KeyCode::Backspace => app.save_dialog.delete_char(),
+                    KeyCode::Enter => {
+                        let filename = app.save_dialog.input.clone();
+                        app.save_dialog.close();
+                        if let Some(result) = &app.result {
+                            match save_results(result, &filename) {
+                                Ok(path) => {
+                                    app.status_message = format!("Results saved to {}", path)
+                                }
+                                Err(e) => app.status_message = format!("Error saving: {}", e),
+                            }
+                        }
+                    }
+                    KeyCode::Esc => app.save_dialog.close(),
+                    _ => {}
+                }
+                continue;
+            }
+
             if app.file_browser.active {
                 let queries_dir = config
                     .queries
@@ -115,13 +137,8 @@ async fn run_app<B: ratatui::backend::Backend>(
                         app.open_file_browser(queries_dir);
                     }
                     KeyCode::F(8) => {
-                        if let Some(result) = &app.result {
-                            match save_results(result) {
-                                Ok(path) => {
-                                    app.status_message = format!("Results saved to {}", path)
-                                }
-                                Err(e) => app.status_message = format!("Error saving: {}", e),
-                            }
+                        if app.result.is_some() {
+                            app.save_dialog.open();
                         }
                     }
                     KeyCode::Esc => app.should_quit = true,
@@ -133,13 +150,8 @@ async fn run_app<B: ratatui::backend::Backend>(
                     KeyCode::Tab => app.focus = Focus::Editor,
                     KeyCode::F(1) => app.show_help = true,
                     KeyCode::F(8) => {
-                        if let Some(result) = &app.result {
-                            match save_results(result) {
-                                Ok(path) => {
-                                    app.status_message = format!("Results saved to {}", path)
-                                }
-                                Err(e) => app.status_message = format!("Error saving: {}", e),
-                            }
+                        if app.result.is_some() {
+                            app.save_dialog.open();
                         }
                     }
                     KeyCode::Esc => app.should_quit = true,
@@ -159,10 +171,19 @@ async fn run_app<B: ratatui::backend::Backend>(
     Ok(())
 }
 
-fn save_results(result: &database::QueryResult) -> anyhow::Result<String> {
-    let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
-    let json_path = format!("results_{}.json", timestamp);
-    let csv_path = format!("results_{}.csv", timestamp);
+fn save_results(result: &database::QueryResult, filename: &str) -> anyhow::Result<String> {
+    let dir = "results";
+    fs::create_dir_all(dir)?;
+
+    let name = if filename.trim().is_empty() {
+        let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
+        format!("results_{}", timestamp)
+    } else {
+        filename.trim().to_string()
+    };
+
+    let json_path = format!("{}/{}.json", dir, name);
+    let csv_path = format!("{}/{}.csv", dir, name);
 
     let json_data = serde_json::json!({
         "columns": result.columns,

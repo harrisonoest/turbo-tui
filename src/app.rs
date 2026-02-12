@@ -18,6 +18,7 @@ pub struct App {
     pub should_quit: bool,
     pub show_help: bool,
     pub file_browser: FileBrowser,
+    pub save_dialog: SaveDialog,
 }
 
 #[derive(Default)]
@@ -26,6 +27,44 @@ pub struct FileBrowser {
     pub selected_index: usize,
     pub preview: String,
     pub active: bool,
+}
+
+#[derive(Default)]
+pub struct SaveDialog {
+    pub active: bool,
+    pub input: String,
+    pub cursor: usize,
+}
+
+impl SaveDialog {
+    pub fn open(&mut self) {
+        self.active = true;
+        self.input.clear();
+        self.cursor = 0;
+    }
+
+    pub fn close(&mut self) {
+        self.active = false;
+        self.input.clear();
+        self.cursor = 0;
+    }
+
+    pub fn insert_char(&mut self, c: char) {
+        self.input.insert(self.cursor, c);
+        self.cursor += c.len_utf8();
+    }
+
+    pub fn delete_char(&mut self) {
+        if self.cursor > 0 {
+            let prev = self.input[..self.cursor]
+                .char_indices()
+                .next_back()
+                .map(|(i, _)| i)
+                .unwrap_or(0);
+            self.input.remove(prev);
+            self.cursor = prev;
+        }
+    }
 }
 
 impl Default for App {
@@ -41,6 +80,7 @@ impl Default for App {
             should_quit: false,
             show_help: false,
             file_browser: FileBrowser::default(),
+            save_dialog: SaveDialog::default(),
         }
     }
 }

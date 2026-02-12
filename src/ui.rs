@@ -30,6 +30,10 @@ pub fn draw(f: &mut Frame, app: &App) {
     draw_editor(f, app, chunks[0]);
     draw_results(f, app, chunks[1]);
     draw_status(f, app, chunks[2]);
+
+    if app.save_dialog.active {
+        draw_save_dialog(f, app);
+    }
 }
 
 fn draw_editor(f: &mut Frame, app: &App, area: Rect) {
@@ -346,6 +350,38 @@ fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
             Constraint::Percentage((100 - percent_x) / 2),
         ])
         .split(popup_layout[1])[1]
+}
+
+fn draw_save_dialog(f: &mut Frame, app: &App) {
+    let area = centered_rect(50, 20, f.area());
+
+    let block = Block::default()
+        .title("Save Results (Enter to save, Esc to cancel)")
+        .borders(Borders::ALL)
+        .border_style(
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+        );
+
+    let text = vec![
+        Line::from("Filename (leave empty for timestamp):"),
+        Line::from(""),
+        Line::from(Span::styled(
+            app.save_dialog.input.as_str(),
+            Style::default().fg(Color::White),
+        )),
+    ];
+
+    let paragraph = Paragraph::new(text)
+        .block(block)
+        .style(Style::default().fg(Color::Cyan));
+
+    f.render_widget(paragraph, area);
+
+    // Position cursor in the input field
+    let inner = Rect::new(area.x + 1, area.y + 3, area.width - 2, 1);
+    f.set_cursor_position((inner.x + app.save_dialog.cursor as u16, inner.y));
 }
 
 fn draw_file_browser(f: &mut Frame, app: &App) {

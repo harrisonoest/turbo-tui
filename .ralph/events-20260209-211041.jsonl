@@ -1,0 +1,2 @@
+{"payload":"Initial code review of TurboTUI - reviewing all src/ modules for correctness, clarity, and maintainability issues","topic":"review.start","ts":"2026-02-09T21:11:08.681063568+00:00"}
+{"payload":"REQUEST_CHANGES: 4 critical issues (Ctrl+C bug blocks typing 'c', UTF-8 cursor panics, stale cursor after format, missing config fields), 5 suggestions, 3 nitpicks. Full review in .agent/code-review-results.md","topic":"review.complete","ts":"2026-02-09T21:12:54.737557119+00:00"}
