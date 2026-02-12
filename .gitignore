@@ -11,6 +11,7 @@ config.toml
 queries/
 
 # Query results
+results/
 results_*.json
 results_*.csv
 
@@ -27,3 +28,7 @@ node_modules/
 package-lock.json
 
 .amazonq/
+.kiro/
+.ralph
+ralph.yml
+.agent/
