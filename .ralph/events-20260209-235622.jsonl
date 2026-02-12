@@ -1,6 +1,0 @@
-{"payload":"task-1770671838-7512: Add panic hook in main.rs. Install std::panic::set_hook BEFORE enable_raw_mode() that calls disable_raw_mode and LeaveAlternateScreen to restore terminal on panic. Use the existing crossterm imports already in main.rs.","topic":"refactor.task","ts":"2026-02-09T23:57:23.225136780+00:00"}
-{"payload":"step: add panic hook in main.rs, tests: pass, clippy: pass","topic":"refactor.done","ts":"2026-02-09T23:58:03.524330955+00:00"}
-{"payload":"step: panic hook, tests: pass, clippy: pass, check: pass","topic":"verify.passed","ts":"2026-02-09T23:59:42.440400358+00:00"}
-{"payload":"step: Use PathBuf::join in app.rs instead of format! for path construction, task: task-1770671841-8a4e","topic":"refactor.task","ts":"2026-02-09T23:59:56.707243504+00:00"}
-{"payload":"step: Use PathBuf::join in app.rs instead of format! for path construction, tests: pass, clippy: pass, task: task-1770671841-8a4e","topic":"refactor.done","ts":"2026-02-10T00:00:36.903279727+00:00"}
-{"payload":null,"topic":"verify.passed","ts":"2026-02-10T00:01:01.132061153+00:00"}

@@ -3,7 +3,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Cell, Paragraph, Row, Table, Wrap},
+    widgets::{Block, Borders, Cell, Clear, Paragraph, Row, Table, Wrap},
     Frame,
 };
 
@@ -353,7 +353,9 @@ fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
 }
 
 fn draw_save_dialog(f: &mut Frame, app: &App) {
-    let area = centered_rect(50, 20, f.area());
+    let area = centered_rect(50, 30, f.area());
+
+    f.render_widget(Clear, area);
 
     let block = Block::default()
         .title("Save Results (Enter to save, Esc to cancel)")
@@ -362,25 +364,33 @@ fn draw_save_dialog(f: &mut Frame, app: &App) {
             Style::default()
                 .fg(Color::Yellow)
                 .add_modifier(Modifier::BOLD),
-        );
+        )
+        .style(Style::default().bg(Color::Rgb(20, 20, 30)));
+
+    let input_display = if app.save_dialog.input.is_empty() {
+        " ".to_string()
+    } else {
+        app.save_dialog.input.clone()
+    };
 
     let text = vec![
+        Line::from(""),
         Line::from("Filename (leave empty for timestamp):"),
         Line::from(""),
         Line::from(Span::styled(
-            app.save_dialog.input.as_str(),
-            Style::default().fg(Color::White),
+            format!(" {:<width$}", input_display, width = (area.width as usize).saturating_sub(4)),
+            Style::default().fg(Color::White).bg(Color::DarkGray),
         )),
     ];
 
     let paragraph = Paragraph::new(text)
         .block(block)
-        .style(Style::default().fg(Color::Cyan));
+        .style(Style::reset().fg(Color::Cyan).bg(Color::Rgb(20, 20, 30)));
 
     f.render_widget(paragraph, area);
 
     // Position cursor in the input field
-    let inner = Rect::new(area.x + 1, area.y + 3, area.width - 2, 1);
+    let inner = Rect::new(area.x + 2, area.y + 4, area.width - 3, 1);
     f.set_cursor_position((inner.x + app.save_dialog.cursor as u16, inner.y));
 }
 
